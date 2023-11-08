@@ -1,39 +1,39 @@
 public class Neighborhood {
-    private String type;
-    private boolean vaccineAdministered;
-    private int typeCycles;
+    private char type;
+    private int cycles;
+    private double P;
     private int x;
     private int y;
-    Neighborhood(String type, int x, int y) {
+    Neighborhood(char type, int x, int y) {
         this.type = type;
-        this.vaccineAdministered = false;
-        this.typeCycles = 0;
+        this.cycles = 0;
+        this.P = 0;
         this.x = x;
         this.y = y;
     }
 
-    public String getType() {
+    public char getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(char type) {
         this.type = type;
     }
 
-    public boolean isVaccineAdministered() {
-        return vaccineAdministered;
+    public int getCycles() {
+        return cycles;
     }
 
-    public void setVaccineAdministered(boolean vaccineAdministered) {
-        this.vaccineAdministered = vaccineAdministered;
+    public void setCycles(int cycles) {
+        this.cycles = cycles;
     }
 
-    public int getTypeCycles() {
-        return typeCycles;
+    public double getP() {
+        return P;
     }
 
-    public void setTypeCycles(int typeCycles) {
-        this.typeCycles = typeCycles;
+    public void setP(double p) {
+        P = p;
     }
 
     public int getX() {
@@ -43,4 +43,5 @@ public class Neighborhood {
     public int getY() {
         return y;
     }
+
 }

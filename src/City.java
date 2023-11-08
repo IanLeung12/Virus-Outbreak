@@ -1,75 +1,92 @@
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
 import java.util.Stack;
 
 public class City {
     private Neighborhood[][] map;
-    private LinkedList<Neighborhood> infectedQueue;
+    private ArrayList<Neighborhood> infectedQueue;
+    private ArrayList<Neighborhood> vaccineQueue;
     private int cycles;
+    private int emptyHoods;
 
     City(int length, int width) {
         this.map = new Neighborhood[length][width];
         this.cycles = 0;
-        this.infectedQueue = new LinkedList<Neighborhood>();
+        this.emptyHoods = length * width - 1;
+        this.infectedQueue = new ArrayList<Neighborhood>(length);
+        this.vaccineQueue = new ArrayList<Neighborhood>(length);
 
         for (int i = 0; i < this.map.length; i ++) {
-            for (int j = 0; j < this.map.length; j ++) {
-                if (Math.random() <= 0.01) {
-                    this.map[i][j] = new Neighborhood("i", j, i);
-                    this.infectedQueue.offer(map[i][j]);
-                } else {
-                    this.map[i][j] = new Neighborhood("r", j, i);
-                }
+            for (int j = 0; j < this.map[0].length; j ++) {
+                this.map[i][j] = new Neighborhood(' ', j, i);
             }
         }
-    }
-
-    City(Neighborhood[][] map) {
-        this.map = map;
-        this.cycles = 0;
+        for (int i = 0; i < 1; i ++) {
+            int x = (int) (Math.random() * (this.map[0].length));
+            int y = (int) (Math.random() * (this.map.length));
+            map[y][x].setType('i');
+            infectedQueue.add(map[y][x]);
+        }
     }
 
     public void runCycle() {
         Stack<Neighborhood> pStack = new Stack<Neighborhood>();
         for (int i = 0; i < infectedQueue.size(); i ++) {
-            for (int y = infectedQueue.get(i).getY() - 1; y < infectedQueue.get(i).getY() + 1; y++) {
-                for (int x = infectedQueue.get(i).getX() - 1; x < infectedQueue.get(i).getX() + 1; x ++) {
-                    if (pointInBounds(x, y)) {
-                        if (this.map[y][x].getType().equals("r")) {
-                            this.map[y][x].setType("P1");
-                            pStack.add(map[y][x]);
-                        } else if (map[y][x].getType().equals("P1")) {
-                            this.map[y][x].setType("P2");
+            for (int y = infectedQueue.get(i).getY() - 1; y <= infectedQueue.get(i).getY() + 1; y++) {
+                for (int x = infectedQueue.get(i).getX() - 1; x <= infectedQueue.get(i).getX() + 1; x ++) {
+                    if (validTile(x, y)) {
+                        if (this.map[y][x].getP() == 0) {
+                            this.map[y][x].setP(Const.P1);
+                            pStack.push(map[y][x]);
+                        } else if (map[y][x].getP() == Const.P1) {
+                            this.map[y][x].setP(Const.P2);
                         }
                     }
                 }
             }
-        }
-        for (int i = 0; i < pStack.size(); i ++) {
-            Neighborhood currentHood = pStack.pop();
-            if (currentHood.getType().equals("P1")) {
-                if (Math.random() <= Values.getP1()) {
-                    currentHood.setType("i");
-                    currentHood.setTypeCycles(Values.getV() - infectedQueue.peek().getTypeCycles());
-                    infectedQueue.offer(currentHood);
-                }
-            } else {
-                if (Math.random() <= Values.getP2()) {
-                    currentHood.setType("i");
-                    currentHood.setTypeCycles(Values.getV() - infectedQueue.peek().getTypeCycles());
-                    infectedQueue.offer(currentHood);
-                }
+            infectedQueue.get(i).setCycles(infectedQueue.get(i).getCycles() + 1);
+            if (infectedQueue.get(i).getCycles() > Const.V) {
+                infectedQueue.get(i).setType('r');
+                infectedQueue.remove(i);
+                i = i - 1;
             }
         }
 
-        if (this.cycles > Values.getD()) {
+        for (int i = 0; i < pStack.size(); i ++) {
+            Neighborhood currentHood = pStack.pop();
+            if (Math.random() <= currentHood.getP()) {
+                if (currentHood.getType() != 'v') {
+                    this.emptyHoods = this.emptyHoods - 1;
+                }
+                currentHood.setType('i');
+                currentHood.setCycles(0);
+                infectedQueue.add(currentHood);
+                vaccineQueue.remove(currentHood);
+            } else {
+                currentHood.setP(0);
+            }
+            i = i - 1;
+        }
+
+        for (int i = 0; i < vaccineQueue.size(); i ++) {
+            vaccineQueue.get(i).setCycles(vaccineQueue.get(i).getCycles() + 1);
+            if (vaccineQueue.get(i).getCycles() > Const.V) {
+                vaccineQueue.get(i).setType('r');
+                vaccineQueue.remove(i);
+                i = i - 1;
+            }
+        }
+
+        if (this.cycles > Const.D) {
             int vaccinesAdministered = 0;
-            while (vaccinesAdministered < Values.getA()) {
-                int x = (int) (Math.random() * (this.map[0].length + 1));
-                int y = (int) (Math.random() * (this.map.length + 1));
-                if (map[y][x].getType().equals("r")) {
-                    map[y][x].setType("v");
+            while ((vaccinesAdministered < Const.A) && (vaccinesAdministered < this.emptyHoods)) {
+                int x = (int) (Math.random() * (this.map[0].length));
+                int y = (int) (Math.random() * (this.map.length));
+                if (map[y][x].getType() == ' ') {
+                    map[y][x].setType('v');
+                    map[y][x].setCycles(0);
                     vaccinesAdministered = vaccinesAdministered + 1;
+                    vaccineQueue.add(map[y][x]);
+                    this.emptyHoods = this.emptyHoods - 1;
                 }
             }
         }
@@ -77,8 +94,8 @@ public class City {
 
     }
 
-    private boolean pointInBounds(int x, int y) {
-        return ((x >= 0) && (x < this.map[0].length) && (y >= 0) && (y < this.map.length));
+    private boolean validTile(int x, int y) {
+        return ((x >= 0) && (x < this.map[0].length) && (y >= 0) && (y < this.map.length) && (map[y][x].getType() != 'r'));
     }
 
 
@@ -86,17 +103,20 @@ public class City {
     public String toString() {
         String str = "";
         for (int i = 0; i < this.map.length; i ++) {
+            System.out.println(i);
             for (int j = 0; j < map[0].length; j ++) {
-                if (map[i][j].getType().equals(".")) {
-                    str = str + "   ";
-                } else if ((!map[i][j].getType().equals("v")) && (!map[i][j].getType().equals("i"))) {
-                    str = str + " r ";
-                } else {
-                    str = str + " " + map[i][j].getType() + " ";
-                }
+                str = str + map[i][j];
             }
             str = str + "\n";
         }
         return str;
+    }
+
+    public Neighborhood[][] getMap() {
+        return map;
+    }
+
+    public int getInfectedQueueSize() {
+        return infectedQueue.size();
     }
 }
