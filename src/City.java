@@ -8,12 +8,13 @@ public class City {
     private int cycles;
     private int emptyHoods;
 
-    City(int length, int width) {
-        this.map = new Neighborhood[length][width];
+    City(int length, int targetTicks) {
+        this.map = new Neighborhood[length][length];
         this.cycles = 0;
-        this.emptyHoods = length * width - 9;
-        this.infectedQueue = new ArrayList<Neighborhood>(length);
-        this.vaccineQueue = new ArrayList<Neighborhood>(length);
+        this.emptyHoods = length * length - 9;
+        this.infectedQueue = new ArrayList<Neighborhood>(length * 4);
+        this.vaccineQueue = new ArrayList<Neighborhood>(length * 4);
+        this.setConstValues(length, targetTicks);
 
         for (int i = 0; i < this.map.length; i ++) {
             for (int j = 0; j < this.map[0].length; j ++) {
@@ -29,6 +30,14 @@ public class City {
             }
         }
 
+    }
+
+    private void setConstValues(int length, int targetTicks) {
+        Const.P1 = 0.004 * (-length/700.0 + 2.6);
+        Const.P2 = 0.008 * (-length/900.0 + 3);
+        Const.A = (int) ((length * length * 0.30)/targetTicks) + 1;
+        Const.D = (targetTicks/4);
+        Const.V = Math.min(length / 32 + 30, targetTicks/2);
     }
 
     public void runCycle() {

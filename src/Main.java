@@ -1,20 +1,27 @@
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        int length = 1000;
-        int targetTicks = 15000;
-        Const.P1 = 0.005 * (-length/800.0 + 3);
-        Const.P2 = 0.0010 * (-length/900.0 + 3);
-        System.out.println(Const.P1 + " " + Const.P2);
-        Const.A = (int) ((length * length * 0.25)/targetTicks) + 1;
-        Const.D = targetTicks/3;
-        Const.V = Math.min(length / 32 + 30, targetTicks);
-        City city = new City(length, length);
+        System.out.println("Welcome to Virus Outbreak.");
+
+        System.out.println("Please enter your desired side length of your map:");
+        Scanner input = new Scanner(System.in);
+        int length = input.nextInt();
+
+        System.out.println("Please enter around how many ticks you want the program to run for (Recommended: 5x - 15x the length):");
+        int targetTicks = input.nextInt();
+
+        System.out.println("Do you want there to be a delay between ticks? (Y/N)");
+        boolean delay = input.next().equals("Y");
+
+        City city = new City(length, targetTicks);
         DisplayGrid visualiser = new DisplayGrid(city.getMap(), length, length);
         while (city.getInfectedQueueSize() > 0) {
             city.runCycle();
             visualiser.refresh();
+            if (delay) {
+                Thread.sleep((long) Math.ceil(1000.0/length));
+            }
         }
     }
 }
