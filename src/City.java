@@ -11,7 +11,7 @@ public class City {
     City(int length, int width) {
         this.map = new Neighborhood[length][width];
         this.cycles = 0;
-        this.emptyHoods = length * width - 1;
+        this.emptyHoods = length * width - 9;
         this.infectedQueue = new ArrayList<Neighborhood>(length);
         this.vaccineQueue = new ArrayList<Neighborhood>(length);
 
@@ -20,12 +20,15 @@ public class City {
                 this.map[i][j] = new Neighborhood(' ', j, i);
             }
         }
-        for (int i = 0; i < 1; i ++) {
-            int x = (int) (Math.random() * (this.map[0].length));
-            int y = (int) (Math.random() * (this.map.length));
-            map[y][x].setType('i');
-            infectedQueue.add(map[y][x]);
+        int x = length/2 - 1;
+        int y = length/2 - 1;
+        for (int i = y; i <= y + 2; i ++) {
+            for (int j = x; j <= x + 2; j ++){
+                map[i][j].setType('i');
+                infectedQueue.add(map[i][j]);
+            }
         }
+
     }
 
     public void runCycle() {
