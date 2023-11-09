@@ -19,7 +19,6 @@ class DisplayGrid {
   private long startTime;
   
   DisplayGrid(Neighborhood[][] map, int l, int targetTicks) {
-    System.out.println("asdas");
     this.map = map;
     this.targetTicks = targetTicks;
     this.startTime = System.currentTimeMillis();
