@@ -6,12 +6,12 @@ public class City {
     private ArrayList<Neighborhood> infectedList;
     private ArrayList<Neighborhood> vaccineList;
     private int cycles;
-    private int emptyHoods;
+    private int emptyNeighborhoods;
 
-    City(int length, int targetTicks) {
+    public City(int length, int targetTicks) {
         this.map = new Neighborhood[length][length];
         this.cycles = 0;
-        this.emptyHoods = length * length - 9;
+        this.emptyNeighborhoods = length * length - 9;
         this.infectedList = new ArrayList<Neighborhood>(length * 3);
         this.vaccineList = new ArrayList<Neighborhood>(length * 3);
         this.setConstValues(length, targetTicks);
@@ -73,7 +73,7 @@ public class City {
             Neighborhood currentHood = pStack.pop();
             if (Math.random() <= currentHood.getP()) {
                 if (currentHood.getType() != 'v') {
-                    this.emptyHoods = this.emptyHoods - 1;
+                    this.emptyNeighborhoods = this.emptyNeighborhoods - 1;
                 }
                 currentHood.setType('i');
                 currentHood.setCycles(0);
@@ -96,7 +96,7 @@ public class City {
 
         if (this.cycles > Const.D) {
             int vaccinesAdministered = 0;
-            while ((vaccinesAdministered < Const.A) && (vaccinesAdministered < this.emptyHoods)) {
+            while ((vaccinesAdministered < Const.A) && (vaccinesAdministered < this.emptyNeighborhoods)) {
                 int x = (int) (Math.random() * (this.map[0].length));
                 int y = (int) (Math.random() * (this.map.length));
                 if (map[y][x].getType() == ' ') {
@@ -104,11 +104,11 @@ public class City {
                     map[y][x].setCycles(0);
                     vaccinesAdministered = vaccinesAdministered + 1;
                     vaccineList.add(map[y][x]);
-                    this.emptyHoods = this.emptyHoods - 1;
+                    this.emptyNeighborhoods = this.emptyNeighborhoods - 1;
                 }
             }
         }
-        this.cycles ++;
+        this.cycles = this.cycles + 1;
 
     }
 

@@ -4,7 +4,7 @@ public class Neighborhood {
     private double P;
     private int x;
     private int y;
-    Neighborhood(char type, int x, int y) {
+    public Neighborhood(char type, int x, int y) {
         this.type = type;
         this.cycles = 0;
         this.P = 0;

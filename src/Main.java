@@ -11,7 +11,7 @@ public class Main {
         System.out.println("Please enter around how many ticks you want the program to run for (Recommended: 5x - 15x the length):");
         int targetTicks = input.nextInt();
 
-        System.out.println("Do you want there to be a delay between ticks? (Y/N)");
+        System.out.println("Do you want there to be a delay between ticks for accessibility? (Y/N)");
         boolean delay = input.next().equals("Y");
         input.close();
 
