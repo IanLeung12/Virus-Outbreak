@@ -66,12 +66,14 @@ class DisplayGrid {
           g.fillRect(j*GridToScreenRatio, i*GridToScreenRatio, GridToScreenRatio, GridToScreenRatio);
         }
       }
+
+      // Data displaying
       g.setColor(Color.black);
       g.setFont(new Font("serif", Font.PLAIN, 56));
       g.drawString("Target ticks: " + targetTicks, 1100, 200);
       g.drawString("Ticks: " + ticks, 1100, 300);
       g.drawString("Infected Neighborhoods: " + infected, 1100, 500);
-      g.drawString("Time Elapsed: " + (System.currentTimeMillis() - startTime)/1000.0, 1100, 600);
+      g.drawString("Time Elapsed: " + (System.currentTimeMillis() - startTime)/1000.0 + "s", 1100, 600);
 
       double pct = Math.round(ticks*10000.0/targetTicks)/100.0;
       g.drawString("% Of Target: ", 1100, 400);

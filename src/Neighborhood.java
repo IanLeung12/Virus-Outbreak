@@ -1,3 +1,9 @@
+/**
+ * [Neighborhood.java]
+ * This class represents a neighborhood
+ * @author Ian Leung
+ * @version 1.0 November 8, 2023
+ */
 public class Neighborhood {
     private char type;
     private int cycles;

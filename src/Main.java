@@ -1,3 +1,10 @@
+/**
+ * [Main.java]
+ * This program simulates a virus outbreak
+ * @author Ian Leung
+ * @version 1.0 November 8, 2023
+ */
+
 import java.util.Scanner;
 
 public class Main {
