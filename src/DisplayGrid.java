@@ -13,17 +13,22 @@ class DisplayGrid {
   private JFrame frame;
   private int maxX,maxY, GridToScreenRatio;
   private Neighborhood[][] map;
-  private int loops = 0;
+  private int targetTicks;
+  private int ticks = 0;
+  private int infected = 0;
+  private long startTime;
   
-  DisplayGrid(Neighborhood[][] map, int l, int w) {
+  DisplayGrid(Neighborhood[][] map, int l, int targetTicks) {
     System.out.println("asdas");
     this.map = map;
-    
+    this.targetTicks = targetTicks;
+    this.startTime = System.currentTimeMillis();
+
     maxX = Toolkit.getDefaultToolkit().getScreenSize().width;
     maxY = Toolkit.getDefaultToolkit().getScreenSize().height;
     GridToScreenRatio = maxY / l;  //ratio to fit in screen as square map
     
-    System.out.println("Map size: "+l+" by "+w + "\nScreen size: "+ maxX +"x"+maxY+ " Ratio: " + GridToScreenRatio);
+    System.out.println("Map size: "+l+" by "+l + "\nScreen size: "+ maxX +"x"+maxY+ " Ratio: " + GridToScreenRatio);
     
     this.frame = new JFrame("Map of World");
     
@@ -36,13 +41,14 @@ class DisplayGrid {
   }
   
   
-  public void refresh() {
-    loops ++;
+  public void refresh(int infected) {
+    this.ticks = ticks + 1;
+    this.infected = infected;
     frame.repaint();
   }
 
   class GridAreaPanel extends JPanel {
-    public void paintComponent(Graphics g) {        
+    public void paintComponent(Graphics g) {
       //super.repaint();
       
       setDoubleBuffered(true);
@@ -62,8 +68,16 @@ class DisplayGrid {
         }
       }
       g.setColor(Color.black);
-      g.setFont(new Font("serif", Font.PLAIN, 100));
-      g.drawString("ticks: " + loops, 800, 300);
+      g.setFont(new Font("serif", Font.PLAIN, 56));
+      g.drawString("Target ticks: " + targetTicks, 1100, 200);
+      g.drawString("Ticks: " + ticks, 1100, 300);
+      g.drawString("Infected Neighborhoods: " + infected, 1100, 500);
+      g.drawString("Time Elapsed: " + (System.currentTimeMillis() - startTime)/1000.0, 1100, 600);
+
+      double pct = Math.round(ticks*10000.0/targetTicks)/100.0;
+      g.drawString("% Of Target: ", 1100, 400);
+      g.setColor(new Color((int) (2.55 * Math.abs(100 - pct)), (int) (200 - 2*Math.abs(100 - pct)),20));
+      g.drawString(pct + "%", 1415, 400);
     }
   }//end of GridAreaPanel
   
